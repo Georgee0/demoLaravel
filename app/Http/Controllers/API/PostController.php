@@ -14,12 +14,54 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = request()->user();
+        $query = $user->posts();
 
-        $post = $user->posts()->with('author')->paginate();
-        
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+
+            // Guard against non-string input (arrays) which can cause string functions to fail
+            if (is_string($search) && $search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                      ->orWhere('body', 'like', '%' . $search . '%');
+                });
+            }
+        }
+
+        // Sorting
+        $allowedFields = ['title', 'created_at', 'updated_at'];
+        $sortField = 'created_at';
+        $sortDirection = 'desc';
+
+        if ($request->filled('sort')) {
+            $sort = $request->input('sort');
+
+            // Ensure $sort is a string before using string functions
+            if (is_string($sort) && $sort !== '') {
+                if (str_starts_with($sort, '-')) {
+                    $sortField = substr($sort, 1);
+                    $sortDirection = 'desc';
+                } else {
+                    $sortField = $sort;
+                    $sortDirection = 'asc';
+                }
+            }
+        }
+
+        // Validate sort field
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'created_at';
+            $sortDirection = 'asc';
+        }
+
+        $query->orderBy($sortField, $sortDirection);
+
+        $post = $query->with('author')->paginate();
+
         return PostResource::collection($post);
         // return response()->json($post, 200);
     }
