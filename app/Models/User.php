@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company',
+        'phone',
     ];
 
     /**
@@ -47,8 +49,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function posts(): HasMany
+    // public function posts(): HasMany
+    // {
+    //     return $this->hasMany(Post::class, 'author_id');
+    // }
+
+        public function company()
     {
-        return $this->hasMany(Post::class, 'author_id');
+        return $this->hasOne(Company::class);
+    }
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class);
+    }
+    public function trucks()
+    {
+        return $this->hasMany(Truck::class);
+    }    
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
 }

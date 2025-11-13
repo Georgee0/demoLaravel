@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transporter_id')->constrained('transporters')->onDelete('cascade');
+            $table->foreignId('transporter_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('phone')->nullable();
             $table->string('email')->unique()->nullable();

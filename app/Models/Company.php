@@ -10,6 +10,6 @@ class Company extends Model
     
     public function transporters()
     {
-        return $this->hasMany(Transporter::class);
+        return $this->hasMany(User::class);
     }
 }

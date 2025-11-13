@@ -25,7 +25,7 @@ class Truck extends Model
 
     public function transporter()
     {
-        return $this->belongsTo(Transporter::class);
+        return $this->belongsTo(User::class);
     }
 
     public function booking()
