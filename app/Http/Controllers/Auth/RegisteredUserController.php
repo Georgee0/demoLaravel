@@ -33,14 +33,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
-            'company' => $request->company,
+            'company_name' => $request->company_name,
             'phone' => $request->phone,
         ]);
 
         // Create associated company
         Company::create([
             'transporter_id' => $user->id,
-            'name' => $request->company,
+            'name' => $request->company_name,
             'email' => $request->email,
             'phone' => $request->phone,
         ]);

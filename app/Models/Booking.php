@@ -27,7 +27,7 @@ class Booking extends Model
     
     public function transporter()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'transporter_id');
     }
 
     public function truck()

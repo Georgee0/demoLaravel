@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'company',
+        'company_name',
         'phone',
     ];
 
@@ -56,18 +56,24 @@ class User extends Authenticatable
 
         public function company()
     {
-        return $this->hasOne(Company::class);
+        return $this->hasOne(Company::class, 'transporter_id');
     }
     public function drivers()
     {
-        return $this->hasMany(Driver::class);
+        return $this->hasMany(Driver::class, 'transporter_id');
     }
     public function trucks()
     {
-        return $this->hasMany(Truck::class);
+        return $this->hasMany(Truck::class, 'transporter_id');
     }    
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class, 'transporter_id');
+    }
+
+    // optional: handy single-relation to get the latest booking
+    public function latestBooking()
+    {
+        return $this->hasOne(Booking::class, 'transporter_id')->latestOfMany();
     }
 }

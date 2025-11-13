@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    protected $fillable = ['name', 'address', 'email'];
+    protected $fillable = ['transporter_id', 'name', 'address', 'email'];
     
     public function transporters()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class, 'transporter_id');
     }
 }

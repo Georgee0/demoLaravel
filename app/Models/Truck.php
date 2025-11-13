@@ -23,12 +23,12 @@ class Truck extends Model
     //     $this->attributes['plate_number'] = $val;
     // }
 
-    public function transporter()
+    public function transporters()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'transporter_id');
     }
 
-    public function booking()
+    public function bookings()
     {
         return $this->hasMany(Booking::class);
     }
