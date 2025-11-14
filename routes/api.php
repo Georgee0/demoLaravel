@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\DriverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PostController;
@@ -16,6 +17,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('v1')->group(function () {
         Route::apiResource('posts',  PostController::class);
+        Route::apiResource('drivers',  DriverController::class);
     
     });
 });
