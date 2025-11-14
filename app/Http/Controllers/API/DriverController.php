@@ -65,13 +65,6 @@ class DriverController extends Controller
                 'message' => 'Drivers retrieved successfully',
             ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-    }
     
     /**
      * Store a newly created resource in storage.
@@ -105,14 +98,6 @@ class DriverController extends Controller
                 'success' => true,
                 'message' => 'Driver retrieved successfully',
             ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**

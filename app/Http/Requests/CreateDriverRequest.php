@@ -23,6 +23,7 @@ class CreateDriverRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:100',
+            'email' => 'nullable|email|max:255',
             'driver_license' => 'required|string|unique:drivers,driver_license|max:15',
             'phone' => 'nullable|string|max:11',
             'transporter_id' => 'required|exists:users,id',
@@ -33,6 +34,7 @@ class CreateDriverRequest extends FormRequest
     {
         return [
             'name.required' => 'Driver name is required.',
+            'email.email' => 'The email must be a valid email address.',
             'driver_license.required' => 'Driver license is required.',
             'driver_license.unique' => 'This driver license is already in use.',
             'transporter_id.required' => 'Transporter ID is required.',
