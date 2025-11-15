@@ -8,6 +8,16 @@ class Booking extends Model
 {
     protected $fillable = ['transporter_id', 'truck_id', 'driver_id', 'booking_date', 'terminal', 'status'];
 
+     // default attribute when status is not provided at all
+    protected $attributes = [
+        'status' => 'pending',
+    ];
+
+    // cast booking_date to a date object
+    protected $casts = [
+        'booking_date' => 'date',
+    ];
+    
     
     protected static function boot()
     {

@@ -4,6 +4,7 @@ use App\Http\Controllers\API\DriverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\TruckController;
 
 Route::get('/demo', function (Request $request) {
@@ -19,6 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('posts',  PostController::class);
         Route::apiResource('drivers',  DriverController::class);
         Route::apiResource('trucks',  TruckController::class);
+        Route::apiResource('bookings',  BookingController::class);
     
     });
 });
