@@ -17,6 +17,7 @@ class TruckResource extends JsonResource
         return [
             'id' => $this->id,
             'model' => $this->model,
+            'color' => $this->color,
             'plate_number' => $this->plate_number,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

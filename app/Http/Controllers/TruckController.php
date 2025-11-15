@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTruckRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use App\Http\Requests\UpdateTruckRequest;
 use App\Http\Resources\TruckResource;
 use App\Models\Truck;
 use Illuminate\Http\Request;
@@ -101,7 +102,7 @@ class TruckController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDriverRequest $request, Truck $truck)
+    public function update(UpdateTruckRequest $request, Truck $truck)
     {
         abort_if(Auth::id() != $truck->transporter_id, 403, 'Access forbidden.');
 
