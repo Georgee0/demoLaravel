@@ -4,16 +4,16 @@ use App\Http\Controllers\API\DriverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PostController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\TruckController;
+use App\Http\Controllers\API\BookingController;
+use App\Http\Controllers\API\TruckController;
 
 Route::get('/demo', function (Request $request) {
     return ["message" => "This is a demo API route."];
 });
 
-Route::apiResource('users', \App\Http\Controllers\UserController::class)->only(['index','show', 'destroy']);
+Route::apiResource('users', \App\Http\Controllers\API\UserController::class)->only(['index','show', 'destroy']);
 
-Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\VerificationController::class, 'verify'])
+Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\API\VerificationController::class, 'verify'])
     ->name('api.verify')
     ->middleware('signed'); // ensures signature & expiry are valid
 
