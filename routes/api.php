@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\BookingController;
+use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\TruckController;
 
 Route::get('/demo', function (Request $request) {
@@ -15,12 +16,13 @@ Route::apiResource('users', \App\Http\Controllers\API\UserController::class)->on
 
 Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\API\VerificationController::class, 'verify'])
     ->name('api.verify')
-    ->middleware('signed'); // ensures signature & expiry are valid
+    ->middleware('signed');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post('/user/change-password', [ChangePasswordController::class, 'store'])->name('password.change');
 
     Route::prefix('v1')->group(function () {
         Route::apiResource('posts',  PostController::class);
