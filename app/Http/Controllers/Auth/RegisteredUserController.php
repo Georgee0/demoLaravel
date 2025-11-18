@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -39,6 +40,12 @@ class RegisteredUserController extends Controller
             'company_name' => $request->company_name,
             'phone' => $request->phone,
         ]);
+
+        // Assign transporter role
+        $userRole = Role::where('name', 'transporter')->first();
+        if ($userRole) {
+            $user->assignRole($userRole);
+        }
 
         // Create associated company
         Company::create([

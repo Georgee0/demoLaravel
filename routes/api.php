@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\API\Controllers\ActivateUserController;
+use App\Http\API\Controllers\InviteUserController;
 use App\Http\Controllers\API\DriverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -8,27 +10,44 @@ use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\TruckController;
 
-Route::get('/demo', function (Request $request) {
-    return ["message" => "This is a demo API route."];
-});
 
+// Admin-only middleware group removed because 'role:admin' middleware is not registered.
+// If you need admin-only routes, either register the 'role' middleware in App\Http\Kernel.php
+// or protect routes using a different middleware (e.g. a custom 'is_admin' middleware).
+// All users management routes
 Route::apiResource('users', \App\Http\Controllers\API\UserController::class)->only(['index','show', 'destroy']);
 
+// Email verification route
 Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\API\VerificationController::class, 'verify'])
     ->name('api.verify')
     ->middleware('signed');
 
+
+// Activate user account on invite
+Route::post('/activate/{token}', [ActivateUserController::class, 'activate']);
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
+    
+    Route::middleware('can:invite-users')->group(function () {
+        // User invitation
+        Route::post('/invite', [InviteUserController::class, 'inviteUser']);
+        
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
     });
+    
     Route::post('/user/change-password', [ChangePasswordController::class, 'store'])->name('password.change');
 
     Route::prefix('v1')->group(function () {
-        Route::apiResource('posts',  PostController::class);
-        Route::apiResource('drivers',  DriverController::class);
-        Route::apiResource('trucks',  TruckController::class);
-        Route::apiResource('bookings',  BookingController::class)->only(['index', 'show', 'store']);
+        Route::middleware('role:admin|transporter')->group(function () {
+            // Admin-only routes can be placed here
+            Route::apiResource('posts',  PostController::class);
+            Route::apiResource('drivers',  DriverController::class);
+            Route::apiResource('trucks',  TruckController::class);
+            Route::apiResource('bookings',  BookingController::class)->only(['index', 'show', 'store']);
+        });
     
     });
 });

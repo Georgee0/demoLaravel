@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('company_name')->required();
+            $table->string('company_name')->required()->unique();
             $table->boolean('is_verified')->default(false);
-            $table->string('phone')->nullable();
+            $table->string('phone')->required()->unique();
+            $table->string('password')->nullable();
+            $table->string('activation_token')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
