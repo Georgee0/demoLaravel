@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\API\Controllers\ActivateUserController;
-use App\Http\API\Controllers\InviteUserController;
+use App\Http\Controllers\API\ActivateUserController;
+use App\Http\Controllers\API\InviteUserController;
 use App\Http\Controllers\API\DriverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,14 +24,14 @@ Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\API\VerificationCo
 
 
 // Activate user account on invite
-Route::post('/activate/{token}', [ActivateUserController::class, 'activate']);
+Route::post('/activate/{token} ', [ActivateUserController::class, 'activate'])->name('activate');
 
 
+Route::post('/invite', [InviteUserController::class, 'inviteUser']);
 Route::middleware(['auth:sanctum'])->group(function () {
     
     Route::middleware('can:invite-users')->group(function () {
         // User invitation
-        Route::post('/invite', [InviteUserController::class, 'inviteUser']);
         
         Route::get('/user', function (Request $request) {
             return $request->user();

@@ -17,34 +17,33 @@ class RolePermissionSeeder extends Seeder
     {
         // Clear cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        $guard = config('auth.defaults.guard'); // ensure correct guard (usually 'web' or 'api')
+        // $guard = config('auth.defaults.guard'); // ensure correct guard (usually 'web' or 'api')
+        $guard = 'sanctum';
 
-        // Define permissions
-        Permission::create(['name' => 'create bookings']);
-        Permission::create(['name' => 'view bookings']);
-        Permission::create(['name' => 'delete bookings']);
+        // Define permissions (include guard_name)
+        Permission::firstOrCreate(['name' => 'create bookings', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'view bookings',   'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'delete bookings', 'guard_name' => $guard]);
 
-        Permission::create(['name' => 'create drivers']);
-        Permission::create(['name' => 'view drivers']);
-        Permission::create(['name' => 'update drivers']);
-        Permission::create(['name' => 'delete drivers']);
+        Permission::firstOrCreate(['name' => 'create drivers', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'view drivers',   'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'update drivers', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'delete drivers', 'guard_name' => $guard]);
 
-        Permission::create(['name' => 'create trucks']);
-        Permission::create(['name' => 'view trucks']);
-        Permission::create(['name' => 'update trucks']);
-        Permission::create(['name' => 'delete trucks']);
+        Permission::firstOrCreate(['name' => 'create trucks', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'view trucks',   'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'update trucks', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'delete trucks', 'guard_name' => $guard]);
 
-        Permission::create(['name' => 'view transporter']);
-        Permission::create(['name' => 'create transporter']);
-        
+        Permission::firstOrCreate(['name' => 'view transporter', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'create transporter', 'guard_name' => $guard]);
 
-        //  Roles
-        $admin = Role::create(['name' => 'admin']);
-        $transporter = Role::create(['name' => 'transporter']);
-        $operational_verifier = Role::create(['name' => 'operationalVerifier']);
-        $company = Role::create(['name' => 'company']);
-        $customer_care = Role::create(['name' => 'customerCare']);
-
+        // Roles (include guard_name)
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => $guard]);
+        $transporter = Role::firstOrCreate(['name' => 'transporter', 'guard_name' => $guard]);
+        $operational_verifier = Role::firstOrCreate(['name' => 'operational_verifier', 'guard_name' => $guard]);
+        $company = Role::firstOrCreate(['name' => 'company', 'guard_name' => $guard]);
+        $customer_care = Role::firstOrCreate(['name' => 'customer_care', 'guard_name' => $guard]);
         // Assign permissions to roles
         $admin->givePermissionTo(Permission::all());
         $transporter->givePermissionTo([

@@ -1,4 +1,3 @@
-<?php
 <!doctype html>
 <html>
 <head>
@@ -18,7 +17,7 @@
               </p>
 
               <p style="text-align:center; margin:24px 0;">
-                <a href="{{ $url }}" style="display:inline-block; padding:12px 20px; background:#2563eb; color:#fff; text-decoration:none; border-radius:6px; font-weight:600;">
+                <a href="{{ url('/activate/' . ($user->activation_token ?? '')) }}" style="display:inline-block; padding:12px 20px; background:#2563eb; color:#fff; text-decoration:none; border-radius:6px; font-weight:600;">
                   Activate Account
                 </a>
               </p>
@@ -27,7 +26,7 @@
                 If the button above doesn't work, copy and paste the link below into your browser:
               </p>
               <p style="word-break:break-all; font-size:13px; color:#2563eb; margin:0 0 20px 0;">
-                <a href="{{ $url }}" style="color:#2563eb; text-decoration:none;">{{ $url }}</a>
+                <a href="{{ url('/activate/' . ($user->activation_token ?? '')) }}" style="color:#2563eb; text-decoration:none;">{{ url('/activate/' . ($user->activation_token ?? '')) }}</a>
               </p>
 
               <p style="margin:0; color:#777; font-size:13px;">

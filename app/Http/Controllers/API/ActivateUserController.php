@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\API\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -8,10 +8,17 @@ use App\Http\Controllers\Controller;
 
 class ActivateUserController extends Controller
 {
-    public function activate(Request $request, $token)
+    public function activate(Request $request, $token=null)
     {
-        $user = User::where('activation_token', $token)->firstOrFail();
-        if (!$user) {
+        // token may come from route (/activate/{token}), query (?token=...), or request body JSON
+        $token = $token ?? $request->input('token') ?? $request->query('token');
+
+        if (! $token) {
+            return response()->json(['message' => 'Activation token is required.'], 400);
+        }
+
+        $user = User::where('activation_token', $token)->first();
+        if (! $user) {
             return response()->json(['message' => 'Invalid activation token.'], 400);
         }
 
@@ -20,9 +27,10 @@ class ActivateUserController extends Controller
         ]);
 
         $user->update([
-            'password' => bcrypt($request->string('password')),
+            'password' => bcrypt($request->input('password')),
             'activation_token' => null,
             'is_verified' => true,
+            'email_verified_at' => now(),
         ]);
 
         return response()->json(['message' => 'Account activated successfully.'], 200);

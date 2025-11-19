@@ -25,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'company_name',
+        'activation_token',
         'phone',
         'is_verified',
     ];
