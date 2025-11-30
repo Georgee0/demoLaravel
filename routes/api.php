@@ -11,10 +11,7 @@ use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\TruckController;
 
 
-// Admin-only middleware group removed because 'role:admin' middleware is not registered.
-// If you need admin-only routes, either register the 'role' middleware in App\Http\Kernel.php
-// or protect routes using a different middleware (e.g. a custom 'is_admin' middleware).
-// All users management routes
+
 Route::apiResource('users', \App\Http\Controllers\API\UserController::class)->only(['index','show', 'destroy']);
 
 // Email verification route
