@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Services\BookingService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBookingRequest;
 use App\Http\Resources\BookingResource;
@@ -10,53 +11,24 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    // constructor injection 
+    public function __construct(private BookingService $bookingService)
+    {
+
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = $user->bookings();
-
-        // Apply filters
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            if (is_string($search) && $search !== '') {
-                $query = $query->where(function ($q) use ($search) {
-                    $q->where('booking_code', 'like', '%' . $search . '%')
-                      ->orWhere('status', 'like', '%' . $search . '%');
-                });
-            }
-        }
-
-        // Sorting
-        $allowedFields = ['created_at', 'updated_at'];
-        $sortField = 'created_at';
-        $sortDirection = 'desc';
-
-        if ($request->filled('sort')) {
-            $sort = $request->input('sort');
-            if (is_string($sort) && $sort !== '') {
-                if (str_starts_with($sort, '-')) {
-                    $sortField = substr($sort, 1);
-                    $sortDirection = 'desc';
-                } else {
-                    $sortField = $sort;
-                    $sortDirection = 'asc';
-                }
-            }
-        }
         
-        if (! in_array($sortField, $allowedFields)) {
-            $sortField = 'created_at';
-            $sortDirection = 'desc';
-        }
-        
-        $query = $query->orderBy($sortField, $sortDirection);
+        $query = $this->bookingService->getUserBookings($user, [
+            'search' => $request->input('search'),
+        ]);
 
-        $bookings = $query->paginate();
-
-        return BookingResource::collection($bookings)
+        return BookingResource::collection($query)
             ->additional([
                 'success' => true,
                 'message' => 'Bookings retrieved successfully',
@@ -68,11 +40,14 @@ class BookingController extends Controller
      */
     public function store(CreateBookingRequest $request)
     {
-        $user = $request->user();
 
-        $booking = $user->bookings()->create($request->validated());
+        $booking = $this->bookingService->createBooking($request->validated());
 
-        return new BookingResource($booking);
+        return (new BookingResource($booking))
+            ->additional([
+                'success' => true,
+                'message' => 'Booking created successfully',
+            ]);
     }
 
     /**
@@ -82,7 +57,11 @@ class BookingController extends Controller
     {
         
         abort_if($booking->transporter_id !== request()->user()->id, 403, 'Unauthorized access to this booking.');
-        return new BookingResource($booking);
+        return (new BookingResource($booking))
+            ->additional([
+                'success' => true,
+                'message' => 'Booking retrieved successfully',
+            ]);
     }
 
     /**
