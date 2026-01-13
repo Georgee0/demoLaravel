@@ -26,6 +26,7 @@ class BookingController extends Controller
         
         $query = $this->bookingService->getUserBookings($user, [
             'search' => $request->input('search'),
+            'sort' => $request->input('sort'),
         ]);
 
         return BookingResource::collection($query)

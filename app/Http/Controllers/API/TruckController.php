@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Services\TruckService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTruckRequest;
 use App\Http\Requests\UpdateDriverRequest;
@@ -13,52 +14,24 @@ use Illuminate\Support\Facades\Auth;
 
 class TruckController extends Controller
 {
+    // construct injection
+    public function __construct(private TruckService $truckService) 
+    {
+
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = $user->trucks();
-    
-        // Apply filters
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            if (is_string($search) && $search !== '') {
-                $query = $query->where(function ($q) use ($search) {
-                    $q->where('model', 'like', '%' . $search . '%')
-                      ->orWhere('plate_number', 'like', '%' . $search . '%');
-                });
-            }
-        }
-    
-        // Sorting
-        $allowedFields = ['created_at', 'updated_at'];
-        $sortField = 'created_at';
-        $sortDirection = 'desc';
-    
-        if ($request->filled('sort')) {
-            $sort = $request->input('sort');
-            if (is_string($sort) && $sort !== '') {
-                if (str_starts_with($sort, '-')) {
-                    $sortField = substr($sort, 1);
-                    $sortDirection = 'desc';
-                } else {
-                    $sortField = $sort;
-                    $sortDirection = 'asc';
-                }
-            }
-        }
-        
-        if (! in_array($sortField, $allowedFields)) {
-            $sortField = 'created_at';
-            $sortDirection = 'desc';
-        }
-        
-        $query = $query->orderBy($sortField, $sortDirection);
-    
-        $trucks = $query->paginate();
-    
+
+        $trucks = $this->truckService->getTrucks($user, [
+            'search' => $request->input('search'),
+            'sort' => $request->input('sort'),
+        ]);
+   
         return TruckResource::collection($trucks)
             ->additional([
                 'success' => true,
