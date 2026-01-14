@@ -45,16 +45,16 @@ class TruckController extends Controller
      */
     public function store(CreateTruckRequest $request)
     {
-        $data = $request->validated();
-        $user = $request->user();
-        $trucks = $user->trucks()->create($data);
+        $trucks = $this->truckService->createTruck(
+            $request->validated(), 
+            $request->user());
     
         return (new TruckResource($trucks))
             ->additional([
                 'success' => true,
                 'message' => 'Truck created successfully',
                 'meta' => [
-                    'created_by' => $user->id,
+                    'created_by' => $request->user()->id,
                 ],
             ]);            
     }
@@ -81,7 +81,8 @@ class TruckController extends Controller
         abort_if(Auth::id() != $truck->transporter_id, 403, 'Access forbidden.');
 
         $data = $request->validated();
-        $truck->update($data);
+
+        $truck = $this->truckService->updateTruck($data, $truck);
 
         return (new TruckResource($truck))
             ->additional([

@@ -56,4 +56,19 @@ class TruckService
 
         return $trucks;
     }
+
+    public function createTruck(array $data, $user)
+    {
+        $data['transporter_id'] = $user->id;
+        $trucks = $user->trucks()->create($data);
+        
+        return $trucks;
+    }
+
+    public function updateTruck(array $data, $truck)
+    {
+        $truck->update($data);
+        
+        return $truck;
+    }
 }
