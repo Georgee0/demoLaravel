@@ -8,6 +8,10 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
+use App\Services\BookingService;
+use App\Services\DriverService;
+use App\Services\TruckService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -15,7 +19,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(BookingService::class, function ($app) {
+            return new BookingService();
+        });
+
+        $this->app->singleton(DriverService::class, function ($app) {
+            return new DriverService();
+        });
+
+        $this->app->singleton(TruckService::class, function ($app) {
+            return new TruckService();
+        });
     }
 
     /**
