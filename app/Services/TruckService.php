@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Driver;
 class TruckService
 {
     /**
@@ -65,10 +66,10 @@ class TruckService
         return $trucks;
     }
 
-    public function updateTruck(array $data, $truck)
+    public function updateTruck(Driver $driver, array $data)
     {
-        $truck->update($data);
+        $driver->update($data);
         
-        return $truck;
+        return $driver;
     }
 }
