@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Driver;
+use App\Models\Truck;
+
 class TruckService
 {
     /**
@@ -61,15 +62,15 @@ class TruckService
     public function createTruck(array $data, $user)
     {
         $data['transporter_id'] = $user->id;
-        $trucks = $user->trucks()->create($data);
+        $truck = $user->trucks()->create($data);
         
-        return $trucks;
+        return $truck;
     }
 
-    public function updateTruck(Driver $driver, array $data)
+    public function updateTruck(Truck $truck, array $data)
     {
-        $driver->update($data);
+        $truck->update($data);
         
-        return $driver;
+        return $truck;
     }
 }

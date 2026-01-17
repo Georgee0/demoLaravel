@@ -82,7 +82,7 @@ class TruckController extends Controller
 
         $data = $request->validated();
 
-        $truck = $this->truckService->updateTruck($data, $truck);
+        $truck = $this->truckService->updateTruck($truck, $data);
 
         return (new TruckResource($truck))
             ->additional([
