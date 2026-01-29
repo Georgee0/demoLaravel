@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\NewAccount;
+use App\Listeners\WelcomeMail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -11,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\BookingService;
 use App\Services\DriverService;
 use App\Services\TruckService;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,5 +47,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(50)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Events
+        Event::listen(NewAccount::class, WelcomeMail::class);
     }
 }

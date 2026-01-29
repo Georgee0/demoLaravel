@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\NewAccount;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Company;
@@ -36,7 +37,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
+            'password' => Hash::make($request->password),
             'company_name' => $request->company_name,
             'phone' => $request->phone,
         ]);
@@ -62,13 +63,15 @@ class RegisteredUserController extends Controller
             ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())]
         );
 
-        Mail::to($user->email)->send(new \App\Mail\VerifyEmail($user, $verificationUrl));
+        // Fire NewAccount event
+        event(new NewAccount($user, $verificationUrl));
 
         event(new Registered($user));
 
        // prepare extra response data
         $extra = ['message' => 'Verification link sent to your email.'];
         if (config('app.debug')) {
+
             // include the link in the response only for debugging/dev
             $extra['verification_url'] = $verificationUrl;
         }
