@@ -6,7 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -60,19 +60,17 @@ class UserController extends Controller
             $sortDirection = 'desc';
         }
 
-        // Check Redis cache
+        // Check cache
         $cacheKey = 'users_index_' . md5(json_encode(request()->all()));
-        $users = Redis::get($cacheKey);
+        $users = Cache::get($cacheKey);
 
         if (!$users) {
             // pagination
             $query = $query->orderBy($sortField, $sortDirection);
             $users = $query->paginate();
 
-            // Store in Redis cache for 10 minutes
-            Redis::setex($cacheKey, 600, json_encode($users));
-        } else {
-            $users = json_decode($users);
+            // Store in cache for 10 minutes
+            Cache::put($cacheKey, $users, 600);
         }
 
         return UserResource::collection($users)
