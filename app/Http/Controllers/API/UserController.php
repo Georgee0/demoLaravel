@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redis;
 
 class UserController extends Controller
 {
@@ -18,7 +19,6 @@ class UserController extends Controller
         $query = User::query();
 
         // Apply filtering
-
         $search = trim(request()->input('search', ''));
 
         if ($search !== '') {
@@ -30,10 +30,10 @@ class UserController extends Controller
             });
         }
 
-         // Filter by verified status (e.g. ?verified=true or ?verified=false)
+        // Filter by verified status (e.g. ?verified=true or ?verified=false)
         if (request()->filled('verified')) {
             $verified = filter_var(request()->input('verified'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-            if (! is_null($verified)) {
+            if ($verified !== null) {
                 $query->where('is_verified', $verified);
             }
         }
@@ -60,10 +60,21 @@ class UserController extends Controller
             $sortDirection = 'desc';
         }
 
-        // pagination
-        $query = $query->orderBy($sortField, $sortDirection);
-        $users = $query->paginate();
-        
+        // Check Redis cache
+        $cacheKey = 'users_index_' . md5(json_encode(request()->all()));
+        $users = Redis::get($cacheKey);
+
+        if (!$users) {
+            // pagination
+            $query = $query->orderBy($sortField, $sortDirection);
+            $users = $query->paginate();
+
+            // Store in Redis cache for 10 minutes
+            Redis::setex($cacheKey, 600, json_encode($users));
+        } else {
+            $users = json_decode($users);
+        }
+
         return UserResource::collection($users)
             ->additional([
                 'success' => true,
